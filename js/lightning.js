@@ -1,3 +1,9 @@
+function adjustCanvas () {
+    var canv = document.getElementById("c");
+    canv.width = window.innerWidth;
+    canv.height = window.innerHeight;
+};
+
 
 var DRAG_POINT_NUM = 4;
 var DRAG_POINT_MAX_NUM = 8;
