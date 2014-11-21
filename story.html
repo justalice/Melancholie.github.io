@@ -1,12 +1,139 @@
 ﻿<html>
 <head>
 <title>Melancholie story... </title>
+<style>
+/*Simple reset*/
+* {margin: 0; padding: 0;}
+
+@font-face {
+    font-family: Philosopher;
+    src: url("css/fonts/heavengate/HeavenGate.ttf"); 
+}
+
+
+body {
+	background: #222222;
+	color: #E1224A;
+	font-size: 18px;
+	line-height: 2;
+	font-family: "Philosopher";
+	font-weight: bold;
+}
+canvas {
+	display: block;
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:0;
+}
+#content {
+	width: 60%;
+	margin: 0 auto;
+	margin-top: 50px;
+}
+header {
+	font-weight: bold;
+	font-size: 25px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	text-align: center;
+}
+</style>
 </head>
 <body>
-
-Indeterminacy... Heard a lot of times and from different people that if something is undetermined, not yet predictable, unclear - it is bad. And the explanation was that if we have the situation like here - we are afraid of it, we start to analyze it, we want to evaluate all the possible ways options and results, and we always stick to "sad" path even not realizing it. In another words, if there is a lack of information we turn our imagination on. And all this phrases sound like it's wrong. 
+<canvas id="canvas"></canvas>
+<header>Indeterminacy... </header>
+<div id="content">Heard a lot of times and from different people that if something is undetermined, not yet predictable, unclear - it is bad. And the explanation was that if we have the situation like here - we are afraid of it, we start to analyze it, we want to evaluate all the possible ways options and results, and we always stick to "sad" path even not realizing it. In another words, if there is a lack of information we turn our imagination on. And all this phrases sound like it's wrong. 
 <br>
 But really, what is the indeterminacy?... Is it that awful? In some cases yes, maybe yes. But I have a guess that in another cases it may be different. Imagination can make wonders, it doesn't know what's impossible, there is no any single rule, because it's yours.. And it could be kind of misleading. Close your eyes, imagine something,some object or even person you know, but not fully, or just don't have access to, you enjoy this object or person the way it is, but you have a huge desire to find out more, and you can't. It's impossible, you don't have access, ... , whatever. It's like having an interesting conversation, having an interesting conversation for a long time, but only chatting, no voice, no personal information, limited access to body (okay, no access), ... and you really want it. Why not just to give the imagination totally full freedom? Why not to allow it to construct the ideal? Those two sentences are just questions and I don't know the answer. I feel like I really want to make it free and dive deep into unknown depth. But there are some concerns. While giving more freedom to imagination with such "information missing" things the level of worry grows significantly. Maybe it's because this imagination power means less control over yourself. I can go too deep and become completely and immutably lost without a way back. And this is wierd... Why should I be scared of this? Are there any reasons?... Why might I need a way back if thoughts would create my ideal and perfect world.... I feel like I am going crazy... because this all reminds me the comparison with drugs. When there are drugs someone might be at the highest level of happiness, so he just needs drugs, but lives in a kid of "unreal" for everyone else world. But if he is happy does it really matter?... Drugs are harmful really, imagination is not. Oh, actually it is harmful to the psychic. ..... Wait, no, why is it harmful.. it is just free and uncontrolled. Endless questions and no answers.
-
+</div>
+<script>
+	window.onload = function(){
+	//canvas init
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext("2d");
+	
+	//canvas dimensions
+	var W = window.innerWidth;
+	var H = window.innerHeight;
+	canvas.width = W;
+	canvas.height = H;
+	
+	//snowflake particles
+	var mp = 40; //max particles
+	var particles = [];
+	for(var i = 0; i < mp; i++)
+	{
+		particles.push({
+			x: Math.random()*W, //x-coordinate
+			y: Math.random()*H, //y-coordinate
+			r: Math.random()*4+1, //radius
+			d: Math.random()*mp //density
+		})
+	}
+	
+	//Lets draw the flakes
+	function draw()
+	{
+		ctx.clearRect(0, 0, W, H);
+		
+		ctx.fillStyle = "rgba(255, 34, 74, 0.8)";
+		ctx.beginPath();
+		for(var i = 0; i < mp; i++)
+		{
+			var p = particles[i];
+			ctx.moveTo(p.x, p.y);
+			ctx.arc(p.x, p.y, p.r, 0, Math.PI*2, true);
+		}
+		ctx.fill();
+		update();
+	}
+	
+	//Function to move the snowflakes
+	//angle will be an ongoing incremental flag. Sin and Cos functions will be applied to it to create vertical and horizontal movements of the flakes
+	var angle = 0;
+	function update()
+	{
+		angle += 0.01;
+		for(var i = 0; i < mp; i++)
+		{
+			var p = particles[i];
+			//Updating X and Y coordinates
+			//We will add 1 to the cos function to prevent negative values which will lead flakes to move upwards
+			//Every particle has its own density which can be used to make the downward movement different for each flake
+			//Lets make it more random by adding in the radius
+			p.y += Math.cos(angle+p.d) + 1 + p.r/2;
+			p.x += Math.sin(angle) * 2;
+			
+			//Sending flakes back from the top when it exits
+			//Lets make it a bit more organic and let flakes enter from the left and right also.
+			if(p.x > W+5 || p.x < -5 || p.y > H)
+			{
+				if(i%3 > 0) //66.67% of the flakes
+				{
+					particles[i] = {x: Math.random()*W, y: -10, r: p.r, d: p.d};
+				}
+				else
+				{
+					//If the flake is exitting from the right
+					if(Math.sin(angle) > 0)
+					{
+						//Enter from the left
+						particles[i] = {x: -5, y: Math.random()*H, r: p.r, d: p.d};
+					}
+					else
+					{
+						//Enter from the right
+						particles[i] = {x: W+5, y: Math.random()*H, r: p.r, d: p.d};
+					}
+				}
+			}
+		}
+	}
+	
+	//animation loop
+	setInterval(draw, 27);
+}
+</script>
 </body>
 </html>
